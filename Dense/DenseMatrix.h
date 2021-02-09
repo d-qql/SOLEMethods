@@ -5,7 +5,7 @@
 #ifndef SOLEMETHODS_DENSEMATRIX_H
 #define SOLEMETHODS_DENSEMATRIX_H
 #include <vector>
-#include "../utility/Tripet.h"
+#include "../utility/Triplet.h"
 #include "set"
 
 template<typename T>
@@ -20,6 +20,10 @@ private:
     idx_t H, W;
 
 public:
+    DenseMatrix(const idx_t &h, const idx_t& w): H(h), W(w){
+        matrix.resize(W*H);
+    }
+
     DenseMatrix(const idx_t &h, const idx_t& w, const std::set<Triplet<T>>& in): H(h), W(w){
         matrix.resize(W*H);
         for(auto i: in){
@@ -47,6 +51,21 @@ public:
     }
 
 };
+
+template<typename T>
+std::vector<T> operator*(const DenseMatrix<T>& A, const std::vector<T>& b){
+    std::vector<T> res(b.size());
+    T sum;
+    for(size_t i = 0; i < A.sizeH(); ++i){
+        sum = 0;
+        for(size_t j = 0; j < A.sizeW(); ++j){
+            sum+=A(i, j) * b[j];
+        }
+        res[i] = sum;
+    }
+    return res;
+}
+
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const DenseMatrix<T>& A){
     for(std::size_t i = 0; i < A.sizeH(); ++i){
