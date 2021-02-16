@@ -5,10 +5,19 @@
 #include "Dense/LU.h"
 #include "Generators/RandVectorGenerator.h"
 #include <cmath>
+#include "Sparse/Jacobi.h"
+#include "Sparse/GaussSeidel.h"
+#include "Sparse/SimpleIteration.h"
+#include "Chebyshev/Chebyshev.h"
 int main() {
-    DenseMatrix<double> A = DenseMatrix<double>(10, 10, GenerateMatrix<double>(10, -100, 100));\
-    std::vector<double> b = GenerateVector<double>(10, -1, 1);
+    std::set<Triplet<double>> in;
+    std::vector<double> b = GenerateVector<double>(300, -1, 1);
+    for(size_t k = 0; k < 300; ++k){
+        in.insert({k, k, 1 + double(k+1)/598});
+    }
+    DenseMatrix<double> D = DenseMatrix<double>(300, 300, in);
+    CSR<double> C = CSR<double>(300, 300, in);
 
-    std::cout<<GaussMethod(A, b)<<solveByLU(A, b);
+    std::cout<<Jacobi(C, b)<<GaussSeidel(C, b)<<SimpleIteration(C, b, 1.);
     return 0;
 }
