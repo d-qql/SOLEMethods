@@ -6,6 +6,15 @@
 #define SOLEMETHODS_OVERLOADS_H
 #include <vector>
 template<typename T>
+std::vector<T> operator*(const T& k, const std::vector<T>& b){
+    std::vector<T> res(b.size());
+    for(size_t i = 0; i < b.size(); ++i){
+        res[i] = b[i] * k;
+    }
+    return res;
+}
+
+template<typename T>
 std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b){
     std::vector<T> res(a.size());
     for(size_t i = 0; i < a.size(); ++i){
