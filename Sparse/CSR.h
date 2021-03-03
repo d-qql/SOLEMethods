@@ -24,6 +24,10 @@ private:
     friend std::vector<EL> Jacobi(const CSR<EL>& A, const std::vector<EL>& b);
     template<typename EL>
     friend std::vector<EL> GaussSeidel(const CSR<EL>& A, const std::vector<EL>& b);
+    template<typename EL>
+    friend std::vector<EL> SOR(const CSR<EL>& A, const std::vector<EL>& b, const EL& w);
+    template<typename EL>
+    friend std::vector<EL> SSOR(const CSR<EL>& A, const std::vector<EL>& b, const EL& w);
 public:
     CSR(const idx_t &h, const idx_t &w, const std::set<Triplet<elm_t>>& in): H(h), W(w){
         values.resize(in.size());
