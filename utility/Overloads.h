@@ -23,6 +23,14 @@ std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b){
     return res;
 }
 
+template<typename T>
+std::vector<T> operator+(const std::vector<T>& a, const std::vector<T>& b){
+    std::vector<T> res(a.size());
+    for(size_t i = 0; i < a.size(); ++i){
+        res[i] = a[i] + b[i];
+    }
+    return res;
+}
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& b){
