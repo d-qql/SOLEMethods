@@ -17,9 +17,10 @@ std::vector<T> GaussSeidel(const CSR<T>& A, const std::vector<T>& b){
 
     T sum;
     r = A * x - b;
-    int i = 0;
+
     while( norm(r) > tolerance<T> ){
         for(size_t i = 0; i < A.H; ++i){
+            sum = 0;
             for(idx_t j = A.rows[i]; j < A.rows[i+1]; ++j){
                 if( i != A.cols[j] ) sum += A.values[j] * x[A.cols[j]];
                 else continue;
@@ -27,9 +28,9 @@ std::vector<T> GaussSeidel(const CSR<T>& A, const std::vector<T>& b){
             x[i] = (b[i] - sum)/A(i, i);
         }
         r = A * x - b;
-        ++i;
+
     }
-    std::cout<<i<<std::endl;
+    //std::cout<<i<<std::endl;
     return x;
 }
 #endif //SOLEMETHODS_GAUSSSEIDEL_H
