@@ -58,6 +58,26 @@ public:
         return W;
     }
 
+    elm_t spectrum(){
+        std::vector<elm_t> x = GenerateVector<elm_t>(this->W, -1, 1);
+        x = static_cast<elm_t>(1) / norm(x) * x;
+        std::vector<elm_t> prev_x(this->W);
+
+        auto lambda = static_cast<elm_t>(0);
+        elm_t prev_lambda;
+
+        auto err = static_cast<elm_t>(100);
+        while (err > tolerance<elm_t>){
+            prev_x = x;
+            x = this->operator*(x);
+            prev_lambda = lambda;
+            lambda = x * prev_x;
+            x = static_cast<elm_t>(1) / norm(x) * x;
+            err = Tabs(prev_lambda - lambda) / std::max(Tabs(prev_lambda), Tabs(lambda));
+        }
+        return lambda;
+    }
+
     std::vector<elm_t> operator*(const std::vector<elm_t> &b) const{
         std::vector<elm_t> res(this->H);
         for(idx_t i = 0; i < H; ++i){

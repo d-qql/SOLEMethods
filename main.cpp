@@ -13,12 +13,11 @@
 #include "Sparse/SSOR.h"
 int main() {
     std::set<Triplet<double>> in;
-    std::vector<double> b = GenerateVector<double>(300, -1, 1);
-    for(size_t k = 0; k < 300; ++k){
-        in.insert({k, k, 1 + double(k+1)/598});
-    }
-    CSR<double> C = CSR<double>(300, 300, in);
 
-    std::cout<<SOR(C, b, 0.9)<<SSOR(C, b, 0.9);
+    for(size_t k = 0; k < 15; ++k){
+        in.insert({k, k, static_cast<double>(k+1)});
+    }
+    CSR<double> C = CSR<double>(15, 15, in);
+    std::cout<<C.spectrum();
     return 0;
 }

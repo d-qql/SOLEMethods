@@ -15,6 +15,15 @@ std::vector<T> operator*(const T& k, const std::vector<T>& b){
 }
 
 template<typename T>
+T operator*(const std::vector<T>& a, const std::vector<T>& b){
+    T sum = 0;
+    for(size_t i = 0; i < b.size(); ++i){
+        sum += b[i] * a[i];
+    }
+    return sum;
+}
+
+template<typename T>
 std::vector<T> operator-(const std::vector<T>& a, const std::vector<T>& b){
     std::vector<T> res(a.size());
     for(size_t i = 0; i < a.size(); ++i){
