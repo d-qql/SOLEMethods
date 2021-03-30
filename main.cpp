@@ -11,13 +11,19 @@
 #include "Chebyshev/Chebyshev.h"
 #include "Sparse/SOR.h"
 #include "Sparse/SSOR.h"
+#include "Sparse/GradientDescent.h"
+#include "Sparse/CG.h"
+#include "Krylov/Krylov.h"
+#include "Sparse/GMRES.h"
+
 int main() {
     std::set<Triplet<double>> in;
 
-    for(size_t k = 0; k < 15; ++k){
-        in.insert({k, k, static_cast<double>(k+1)});
-    }
-    CSR<double> C = CSR<double>(15, 15, in);
-    std::cout<<C.spectrum();
+
+    std::vector<double> b = GenerateVector<double>(300, -1, 1);
+    CSR<double> C = CSR<double>(300, 300, GenerateMatrix<double>(300, -100, 100));
+    std::vector<double> x = GenerateVector<double>(300, -100, 100);
+
+
     return 0;
 }
