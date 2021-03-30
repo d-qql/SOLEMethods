@@ -96,4 +96,15 @@ public:
     }
 
 };
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const CSR<T>& A){
+    os<<std::endl;
+    for(std::size_t i = 0; i < A.sizeH(); ++i){
+        for(std::size_t j = 0; j < A.sizeW(); ++j){
+            os<<A(i, j)<<" ";
+        }
+        os<<std::endl;
+    }
+    return os;
+}
 #endif //SOLEMETHODS_CSR_H

@@ -50,6 +50,11 @@ public:
         }
     }
 
+    void deleteLastRow(){
+        --H;
+        matrix.erase(matrix.end() - W, matrix.end());
+    }
+
 };
 
 template<typename T>
