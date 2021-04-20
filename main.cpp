@@ -17,12 +17,14 @@
 #include "Sparse/GMRES.h"
 
 int main() {
-    std::set<Triplet<double>> in;
 
+    size_t SZ = 50;
+    std::set<Triplet<double>> in = GenerateMatrixDiagDominant<double>(SZ);
+    DenseMatrix<double> D(SZ, SZ, in);
+    CSR<double> A = CSR<double>(SZ, SZ, in);
+    std::vector<double> b = GenerateVector<double>(SZ, -1, 1);
+    std::cout<<GMRES(A, b, 50)<<GaussMethod(D, b);
 
-    std::vector<double> b = GenerateVector<double>(300, -1, 1);
-    CSR<double> C = CSR<double>(300, 300, GenerateMatrix<double>(300, -100, 100));
-    std::vector<double> x = GenerateVector<double>(300, -100, 100);
 
 
     return 0;

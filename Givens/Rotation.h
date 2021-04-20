@@ -10,26 +10,32 @@
 #include "../utility/Overloads.h"
 
 template<typename T>
-void HessenbergRot(DenseMatrix<T>& H, std::vector<T>& b){
+void HessenbergRot(DenseMatrix<T>& H, std::vector<T>& b, size_t SZ, std::vector<std::pair<T, T>>& rotations){
     T cos;
     T sin;
     T up, down;
     T Bup, Bdown;
-    for(size_t k = 0; k < H.sizeW(); ++k){
-        cos = H(k, k)/sqrt(H(k, k)*H(k, k) + H(k + 1, k)*H(k + 1, k));
-        sin = H(k + 1, k)/sqrt(H(k, k)*H(k, k) + H(k + 1, k)*H(k + 1, k));
-        Bup = cos * b[k] + sin * b[k + 1];
-        Bdown = -sin * b[k] + cos * b[k + 1];
-        b[k] = Bup;
-        b[k+1] = Bdown;
-        for(size_t j = 0; j < H.sizeW(); ++j){
-            up = cos * H(k, j) + sin * H(k + 1, j);
-            down = -sin * H(k, j) + cos * H(k + 1, j);
-            if(Tabs(down) < tolerance<T>) down = 0;
-            H(k, j) = up;
-            H(k + 1, j) = down;
-        }
+    for(size_t k = 0; k < rotations.size(); ++k){
+        cos = rotations[k].first;
+        sin = rotations[k].second;
+        up = cos * H(k, SZ) + sin * H(k + 1, SZ);
+        down = -sin * H(k, SZ) + cos * H(k + 1, SZ);
+        if(Tabs(down) < tolerance<T>) down = 0;
+        H(k, SZ) = up;
+        H(k + 1, SZ) = down;
     }
+    cos = H(SZ, SZ) / sqrt(H(SZ, SZ) * H(SZ, SZ) + H(SZ + 1 , SZ) * H(SZ + 1, SZ));
+    sin = H(SZ + 1, SZ) / sqrt(H(SZ, SZ) * H(SZ, SZ) + H(SZ + 1 , SZ) * H(SZ + 1, SZ));
+    Bup = cos * b[SZ] + sin * b[SZ + 1];
+    Bdown = -sin * b[SZ] + cos * b[SZ + 1];
+    b[SZ] = Bup;
+    b[SZ + 1] = Bdown;
+    up = cos * H(SZ, SZ) + sin * H(SZ + 1, SZ);
+    down = -sin * H(SZ, SZ) + cos * H(SZ + 1, SZ);
+    if(Tabs(down) < tolerance<T>) down = 0;
+    H(SZ, SZ) = up;
+    H(SZ + 1, SZ) = down;
+    rotations.push_back({cos, sin});
 }
 
 #endif //SOLEMETHODS_ROTATION_H
