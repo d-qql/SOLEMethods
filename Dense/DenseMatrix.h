@@ -59,7 +59,7 @@ public:
 
 template<typename T>
 std::vector<T> operator*(const DenseMatrix<T>& A, const std::vector<T>& b){
-    std::vector<T> res(b.size());
+    std::vector<T> res(A.sizeH());
     T sum;
     for(size_t i = 0; i < A.sizeH(); ++i){
         sum = 0;

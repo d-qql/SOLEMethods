@@ -11,31 +11,36 @@
 #include "../Krylov/Krylov.h"
 
 template<typename T>
-std::vector<T> GMRES(const CSR<T>& A, const std::vector<T>& b){
+std::vector<T> GMRES(const CSR<T>& A, const std::vector<T>& b, int m){
     std::vector<T> x(b.size());
-    std::vector<T> r = b - A*x;
-    int m = A.sizeW();
+    std::vector<T> r = b - A * x;
     T N = norm(r);
 
     std::vector<T> B;
-    while ( N > tolerance<T> ){
-        for(int i = 2; i <= m + 1; ++i){
-            B.resize(i, 0);
-            B[0] = N;
-            auto [V, H] = KrylovSubSpace(A, r, i);
-            HessenbergRot(H, B);
-            if( Tabs(B.back()) < tolerance<T> || i == m + 1 ){
-                H.deleteLastRow();
-                B.pop_back();
-                x = x + V * backSubstTopTriangular(H, B);
-                r = b - A * x;
-                N = norm(r);
-                B.clear();
-                break;
+    std::vector<std::pair<T, T>> rotations;
+    DenseMatrix<T> H(m+1, m);
+    DenseMatrix<T> V(r.size(), m);
+    std::vector<std::vector<T>> Basis;
+    Basis.push_back(1./N * r);
+    B.resize(m+1, 0);
+    B[0] = N;
+    for(int i = 2; i <= m + 1; ++i){
+        KrylovSubSpace(A, Basis, H, i-2);
+        HessenbergRot(H, B, i - 2, rotations);
+        if( Tabs(B[i - 1]) < tolerance<T> || i == m + 1 ){
+            for(size_t j = 0; j < i-1; ++j){
+                for(size_t k = 0; k < r.size(); ++k){
+                    V(k, j) = Basis[j][k];
+                }
             }
-            B.clear();
+            x = x + V * backSubstTopTriangular(H, B, i - 1);
+            r = b - A * x;
+            N = norm(r);
+            std::cout<<"\n"<<N<<"\n";
+            break;
         }
     }
+
     return x;
 }
 
