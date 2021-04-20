@@ -29,6 +29,11 @@ private:
     template<typename EL>
     friend std::vector<EL> SSOR(const CSR<EL>& A, const std::vector<EL>& b, const EL& w);
 public:
+    CSR(const idx_t &h, const idx_t &w, const std::vector<T>& v,const std::vector<T>& c, const std::vector<T>& r){
+        values = v;
+        cols = c;
+        rows = r;
+    }
     CSR(const idx_t &h, const idx_t &w, const std::set<Triplet<elm_t>>& in): H(h), W(w){
         values.resize(in.size());
         cols.resize(in.size());
@@ -76,6 +81,37 @@ public:
             err = Tabs(prev_lambda - lambda) / std::max(Tabs(prev_lambda), Tabs(lambda));
         }
         return lambda;
+    }
+
+    CSR transpose() const{
+        idx_t NonZero = values.size();
+        std::vector<T> tVals(NonZero);
+        std::vector<T> tCols(NonZero);
+        std::vector<T> tRows(W + 1);
+        for(idx_t i = 0; i < NonZero; ++i) tRows[cols[i] + 1]++;
+        idx_t S = 0;
+        idx_t tmp;
+        for(idx_t i = 1; i <= W; ++i){
+            tmp = tRows[i];
+            tRows[i] = S;
+            S += tmp;
+        }
+        idx_t j1, j2, Col, RIndex, IIndex;
+        elm_t V;
+        for(idx_t i = 0; i < H; ++i){
+            j1 = rows[i];
+            j2 = rows[i+1];
+            Col = i;
+            for(idx_t j = j1; j < j2; ++j){
+                V = values[j];
+                RIndex = cols[j];
+                IIndex = tRows[RIndex + 1];
+                tVals[IIndex] = V;
+                tCols[IIndex] = Col;
+                tRows[RIndex + 1]++;
+            }
+        }
+        return CSR(W, H, tVals, tCols, tRows);
     }
 
     std::vector<elm_t> operator*(const std::vector<elm_t> &b) const{
